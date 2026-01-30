@@ -43,9 +43,9 @@ export function updateConfidence(state, snapshot) {
     state.confidence += recoveryRate;
   }
   //clamp confidence
-  if (state.confidence < LIMITS.CONFIDENCE_MIN) {
-    state.confidence = LIMITS.CONFIDENCE_MIN;
-  } else if (state.confidence > LIMITS.CONFIDENCE_MAX) {
-    state.confidence = LIMITS.CONFIDENCE_MAX;
-  }
+  state.confidence = clamp(
+    state.confidence,
+    LIMITS.CONFIDENCE_MIN,
+    LIMITS.CONFIDENCE_MAX,
+  );
 }

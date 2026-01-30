@@ -22,7 +22,7 @@ export function computeEffectiveApy(state) {
   const liquidityStress = state.liquidityStress;
   if (!Number.isFinite(mu)) return 0;
 
-  const noisePenalty = RISK_WEIGHTS.NOISE * Math.sqrt(Math.max(0, noiseVar));
+  const noisePenalty = RISK_WEIGHTS.NOISE * safeSqrt(noiseVar);
 
   const instabilityPenalty =
     RISK_WEIGHTS.INSTABILITY * Math.sqrt(Math.max(0, instabilityVar));
@@ -32,6 +32,6 @@ export function computeEffectiveApy(state) {
 
   const effectiveApy =
     mu - noisePenalty - instabilityPenalty - liquidityPenalty;
-    // eff APY should never exceed smoothed APY
-    return Math.min(mu , effectiveApy);
+  // eff APY should never exceed smoothed APY
+  return Math.min(mu, effectiveApy);
 }
