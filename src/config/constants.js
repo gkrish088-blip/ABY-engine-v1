@@ -13,7 +13,7 @@ export const TIME_CONSTANTS = {
     APY_TREND: 30*60,  //   30 mins
 
     //noise varience
-    NOISE_VARIENCE:2*60*60, //2 hr
+    NOISE_VARIANCE:2*60*60, //2 hr
 
     //instability varience
     INSTABILITY_VARIENCE:60*60,  //1hr
