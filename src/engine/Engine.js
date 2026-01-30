@@ -1,0 +1,75 @@
+/**
+ * Yield Analytics Engine
+ *
+ * Orchestrates all update modules to process normalized
+ * market snapshots and produce analytics outputs.
+ *
+ * This engine:
+ * - is stateful
+ * - processes one market per instance
+ * - assumes snapshots arrive in time order
+ */
+import { EngineState } from "./EngineState.js";
+
+import { updateApy } from "./update/apy.js";
+import { updateVolatility } from "./update/volatility.js";
+import { updateLiquidity } from "./update/liquidity.js";
+import { updateConfidence } from "./update/confidence.js";
+
+import { computeEffectiveApy } from "./update/effectiveApy.js";
+import { decide } from "./decision.js";
+export class YieldAnalyticsEngine {
+  constructor(initialSnapshot) {
+    if (!initialSnapshot) {
+      throw new Error("Initial snapshot is required");
+    }
+
+    this.state = new EngineState(initialSnapshot);
+  }
+
+  /**
+   * Processes a new snapshot and returns engine outputs.
+   *
+   * @param {Object} snapshot - Normalized market snapshot
+   * @returns {Object} Engine output
+   */
+  update(snapshot) {
+    if (!snapshot || snapshot.marketId !== this.state.marketId) {
+      throw new Error("Snapshot does not match engine market");
+    }
+    //estimation part
+    updateApy(this.state, snapshot);
+    updateVolatility(this.state, snapshot);
+    updateLiquidity(this.state, snapshot);
+    //trust part
+    updateConfidence(this.state, snapshot);
+    //interpretition part
+    const effectiveApy = computeEffectiveApy(this.state);
+    const decision = decide({
+      confidence: this.state.confidence,
+      effectiveApy,
+      instabilityVariance: this.state.instabilityVariance,
+      liquidityStress: this.state.liquidityStress,
+    });
+    return {
+      marketId: this.state.marketId,
+      timestamp: snapshot.timestamp,
+
+      metrics: {
+        smoothedAPY: this.state.smoothedAPY,
+        effectiveAPY: effectiveApy,
+        trend: this.state.apyTrend,
+
+        risk: {
+          noiseVariance: this.state.noiseVariance,
+          instabilityVariance: this.state.instabilityVariance,
+          liquidityStress: this.state.liquidityStress,
+        },
+
+        confidence: this.state.confidence,
+      },
+
+      decision,
+    };
+  }
+}
