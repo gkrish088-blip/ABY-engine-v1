@@ -16,6 +16,8 @@ function logCheckpoint(label, result, i) {
  // console.log(`Decision: ${result.decision}`);
   console.log(`Smoothed APY: ${result.metrics.smoothedAPY.toFixed(2)}%`);
   console.log(`Effective APY: ${result.metrics.effectiveAPY.toFixed(2)}%`);
+  console.log(`Raw APY: ${result.metrics.rawAPY.toFixed(2)}%`);
+  console.log(`asset: ${result.metrics.asset}`);
  // console.log(`Confidence: ${result.metrics.confidence.toFixed(3)}`);
   console.log(
     `Risk → noise=${result.metrics.risk.noiseVariance.toFixed(3)}, ` +
