@@ -50,6 +50,18 @@ export function updateVolatility(state, snapshot) {
     deltaTime,
     TIME_CONSTANTS.INSTABILITY_VARIANCE,
   );
+  if (state.deltaTime > TIME_CONSTANTS.GAP_THRESHOLD) {
+  // inject temporal instability
+  const gapPenalty = Math.log(state.deltaTime / TIME_CONSTANTS.GAP_THRESHOLD);
+  state.instabilityVariance = emaUpdate(
+    state.instabilityVariance,
+    gapPenalty * gapPenalty,
+    state.deltaTime,
+    TIME_CONSTANTS.INSTABILITY_VARIANCE
+  );
+  return;
+}
+
 
   // console.log(
   //   "[VOL]",

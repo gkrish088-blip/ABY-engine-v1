@@ -23,6 +23,9 @@ export const TIME_CONSTANTS = {
 
   //Cconfidence recovery
   CONFIDENCE_RECOVERY: 4 * 60 * 60, //4hr
+
+  GAP_THRESHOLD: 1800
+  
 };
 
 //structural constants
@@ -64,7 +67,7 @@ export const DECISION_THRESHOLDS = {
   // Liquidity stress above this is considered dangerous
   LIQUIDITY_STRESS_MAX: 0.95,
   INSTABILITY_THRESHOLD: 0.01,
-  GAP_THRESHOLD: 1800,
+  //GAP_THRESHOLD: 1800,
 };
 
 export const LIMITS = {
