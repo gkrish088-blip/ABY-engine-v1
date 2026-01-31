@@ -13,10 +13,10 @@ const STEP = 300; // 5 minutes
 
 function logCheckpoint(label, result, i) {
   console.log(`\n[${label} t=${i}]`);
-  console.log(`Decision: ${result.decision}`);
+ // console.log(`Decision: ${result.decision}`);
   console.log(`Smoothed APY: ${result.metrics.smoothedAPY.toFixed(2)}%`);
   console.log(`Effective APY: ${result.metrics.effectiveAPY.toFixed(2)}%`);
-  console.log(`Confidence: ${result.metrics.confidence.toFixed(3)}`);
+ // console.log(`Confidence: ${result.metrics.confidence.toFixed(3)}`);
   console.log(
     `Risk → noise=${result.metrics.risk.noiseVariance.toFixed(3)}, ` +
     `instability=${result.metrics.risk.instabilityVariance.toFixed(3)}, ` +

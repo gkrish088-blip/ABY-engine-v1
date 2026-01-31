@@ -10,6 +10,7 @@
  */
 import { emaUpdate } from "../../math/ema.js";
 import { TIME_CONSTANTS, STRUCTURAL } from "../../config/constants.js";
+import { clamp } from "../../math/utils.js";
 /**
  * Updates liquidity-related state variables.
  *
@@ -17,13 +18,16 @@ import { TIME_CONSTANTS, STRUCTURAL } from "../../config/constants.js";
  * @param {Object} snapshot - Normalized market snapshot
  */
 export function updateLiquidity(state, snapshot) {
-  const currentTimestamp = snapshot.timestamp;
+  // const currentTimestamp = snapshot.timestamp;
   const liquidity = snapshot.liquidity;
 
-  const deltaTime = currentTimestamp - state.lastTimestamp;
+  const deltaTime = state.deltaTime;
   if (!Number.isFinite(deltaTime) || deltaTime <= 0) {
     return;
   }
+  //console.log("Δt:", state.deltaTime);
+  const alpha = 1-Math.exp(-deltaTime/TIME_CONSTANTS.LIQUIDITY)
+
   // smooth liquidity
   state.avgLiquidity = emaUpdate(
     state.avgLiquidity,
@@ -31,14 +35,18 @@ export function updateLiquidity(state, snapshot) {
     deltaTime,
     TIME_CONSTANTS.LIQUIDITY,
   );
-  // liquidity stress part 
+  // liquidity stress part
   const referenceLiquidity = STRUCTURAL.LIQUIDITY_REFERENCE;
   if (!Number.isFinite(state.avgLiquidity) || state.avgLiquidity <= 0) {
     state.liquidityStress = 1.0;
   } else {
-    state.liquidityStress = Math.min(
-      1.0,
-      referenceLiquidity / state.avgLiquidity,
-    );
-  }
+const rawStress = referenceLiquidity / state.avgLiquidity;
+
+  state.liquidityStress = emaUpdate(
+    state.liquidityStress,
+    rawStress,
+    alpha
+  );
+
+  state.liquidityStress = clamp(state.liquidityStress, 0, 1);  }
 }

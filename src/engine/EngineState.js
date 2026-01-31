@@ -36,8 +36,11 @@ export class EngineState {
     this.avgLiquidity = initialSnapshot.liquidity;
     this.liquidityStress = 0;
 
-    this.confidence = 1.0;
+    //this.confidence = 1.0;
 
     this.lastRawAPY = initialSnapshot.rawAPY;
+    this.deltaTime  = 0;
+    //this.sampleCount = 0;
+
   }
 }

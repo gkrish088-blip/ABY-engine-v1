@@ -13,6 +13,7 @@
  */
 import { emaUpdate } from "../../math/ema.js";
 import { TIME_CONSTANTS } from "../../config/constants.js";
+import { DECISION_THRESHOLDS } from "../../config/constants.js";
 /**
  * Updates APY volatility-related state variables.
  *
@@ -20,11 +21,14 @@ import { TIME_CONSTANTS } from "../../config/constants.js";
  * @param {Object} snapshot - Normalized market snapshot
  */
 export function updateVolatility(state, snapshot) {
-  const currentTimestamp = snapshot.timestamp;
   const rawAPY = snapshot.rawAPY;
 
-  const deltaTime = currentTimestamp - state.lastTimestamp;
+  const deltaTime = state.deltaTime;
   if (!Number.isFinite(deltaTime) || deltaTime <= 0) return;
+  if (!Number.isFinite(state.lastRawAPY)) {
+    state.lastRawAPY = rawAPY;
+    return;
+  }
   const residual = rawAPY - state.smoothedAPY;
   const residualSquared = residual * residual;
 
@@ -34,6 +38,9 @@ export function updateVolatility(state, snapshot) {
     deltaTime,
     TIME_CONSTANTS.NOISE_VARIANCE,
   );
+
+//  if (!Number.isFinite(state.prevRawAPY)) return;
+
   const deltaAPY = rawAPY - state.lastRawAPY;
   const deltaAPYSquared = deltaAPY * deltaAPY;
 
@@ -43,4 +50,16 @@ export function updateVolatility(state, snapshot) {
     deltaTime,
     TIME_CONSTANTS.INSTABILITY_VARIANCE,
   );
+
+  // console.log(
+  //   "[VOL]",
+  //   "rawAPY=",
+  //   rawAPY,
+  //   "lastRawAPY=",
+  //   state.lastRawAPY,
+  //   "deltaAPY=",
+  //   rawAPY - state.lastRawAPY,
+  //   "deltaTime=",
+  //   state.deltaTime,
+  // );
 }

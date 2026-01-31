@@ -11,7 +11,8 @@
  * Confidence decays quickly on risk,
  * and recovers slowly under stable conditions.
  */
-import { CONFIDENCE, TIME_CONSTANTS, LIMITS } from "../../config/constants.js";
+import { CONFIDENCE, TIME_CONSTANTS, LIMITS,STRUCTURAL } from "../../config/constants.js";
+import { clamp } from "../../math/utils.js";
 /**
  * Updates confidence score.
  *
@@ -19,11 +20,18 @@ import { CONFIDENCE, TIME_CONSTANTS, LIMITS } from "../../config/constants.js";
  * @param {Object} snapshot - Normalized market snapshot
  */
 export function updateConfidence(state, snapshot) {
-  const currentTimestamp = snapshot.timestamp;
-  const deltaTime = currentTimestamp - state.lastTimestamp;
+ if (state.sampleCount < STRUCTURAL.MIN_WARMUP_SAMPLES) {
+  return;
+}
+
+ 
+  //const currentTimestamp = snapshot.timestamp;
+const deltaTime = state.deltaTime;
   if (!Number.isFinite(deltaTime) || deltaTime <= 0) {
     return;
   }
+  //console.log("Δt:", state.deltaTime);
+
   const instabilityPenalty = Math.exp(
     -CONFIDENCE.INSTABILITY_DECAY * state.instabilityVariance,
   );
@@ -39,7 +47,7 @@ export function updateConfidence(state, snapshot) {
   const isStable = state.instabilityVariance < 1 && state.liquidityStress < 0.5;
 
   if (isStable) {
-    const recoveryRate = deltaTime / TIME_CONSTANTS.CONFIDENCE_RECOVERY;
+    const recoveryRate = (1 - state.confidence) * (deltaTime / CONFIDENCE.CONFIDENCE_RECOVERY);
     state.confidence += recoveryRate;
   }
   //clamp confidence

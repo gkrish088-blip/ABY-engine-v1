@@ -25,29 +25,30 @@ export function decide({
   confidence,
   effectiveApy,
   instabilityVariance,
-  liquidityStress
+  liquidityStress,
+  smoothedAPY,
 }) {
-    if (!Number.isFinite(effectiveApy) || effectiveApy <= 0) {
+  if (!Number.isFinite(effectiveApy)) {
+    return "AVOID";
+  }
+  if (effectiveApy <= 0 && state.confidence < 0.3) {
     return "AVOID";
   }
 
-  if (
-    liquidityStress >= DECISION_THRESHOLDS.LIQUIDITY_STRESS_MAX
-  ) {
+  if (liquidityStress >= DECISION_THRESHOLDS.LIQUIDITY_STRESS_MAX) {
     return "AVOID";
   }
 
-  if (
-    confidence < DECISION_THRESHOLDS.CONFIDENCE.RISKY
-  ) {
+  if (confidence < DECISION_THRESHOLDS.CONFIDENCE.RISKY) {
     return "AVOID";
   }
-   if (
-    confidence < DECISION_THRESHOLDS.CONFIDENCE.STABLE
-  ) {
+  if (confidence < DECISION_THRESHOLDS.CONFIDENCE.STABLE) {
     return "RISKY";
   }
-    if (instabilityVariance > 1) {
+  const normalizedInstability =
+    instabilityVariance / (smoothedAPY * smoothedAPY);
+
+  if (normalizedInstability > DECISION_THRESHOLDS.INSTABILITY_THRESHOLD) {
     return "RISKY";
   }
 

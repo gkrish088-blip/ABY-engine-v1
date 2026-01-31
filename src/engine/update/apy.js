@@ -23,8 +23,9 @@ export function updateApy(state, snapshot) {
     const currentTimestamp = snapshot.timestamp;
     const rawAPY = snapshot.rawAPY;
 
-    const deltaTime = currentTimestamp - state.lastTimestamp;
+const deltaTime = state.deltaTime;
     if(!Number.isFinite(deltaTime) || deltaTime <= 0 ) return ;
+//console.log("Δt:", state.deltaTime);
 
     const previousSmoothedAPY = state.smoothedAPY;
 
@@ -38,5 +39,5 @@ export function updateApy(state, snapshot) {
     state.apyTrend = emaUpdate(state.apyTrend,instantaneousDrift , deltaTime , TIME_CONSTANTS.APY_TREND);
 
     //update last observed values 
-    state.lastRawAPY = rawAPY;
+    // state.lastRawAPY = rawAPY;
 }

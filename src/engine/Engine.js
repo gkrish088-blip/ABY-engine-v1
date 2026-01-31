@@ -14,10 +14,10 @@ import { EngineState } from "./EngineState.js";
 import { updateApy } from "./update/apy.js";
 import { updateVolatility } from "./update/volatility.js";
 import { updateLiquidity } from "./update/liquidity.js";
-import { updateConfidence } from "./update/confidence.js";
+//import { updateConfidence } from "./update/confidence.js";
 
 import { computeEffectiveApy } from "./update/effectiveApy.js";
-import { decide } from "./decision.js";
+//import { decide } from "./decision.js";
 export class YieldAnalyticsEngine {
   constructor(initialSnapshot) {
     if (!initialSnapshot) {
@@ -37,21 +37,28 @@ export class YieldAnalyticsEngine {
     if (!snapshot || snapshot.marketId !== this.state.marketId) {
       throw new Error("Snapshot does not match engine market");
     }
-    //estimation part
+
+    const currentTimestamp = snapshot.timestamp;
+
+    const deltaTime =
+      this.state.lastTimestamp === null
+        ? 0
+        : currentTimestamp - this.state.lastTimestamp;
+
+    // store for this tick
+    this.state.deltaTime = deltaTime;
+
+
+    // estimation phase (READ old state)
     updateApy(this.state, snapshot);
+     // console.log(this.state.lastRawAPY)
     updateVolatility(this.state, snapshot);
+    
     updateLiquidity(this.state, snapshot);
-    //trust part
-    updateConfidence(this.state, snapshot);
+    this.state.lastRawAPY = snapshot.rawAPY
+    this.state.lastTimestamp = currentTimestamp;
     //interpretition part
     const effectiveApy = computeEffectiveApy(this.state);
-    const decision = decide({
-      confidence: this.state.confidence,
-      effectiveApy,
-      instabilityVariance: this.state.instabilityVariance,
-      liquidityStress: this.state.liquidityStress,
-    });
-    state.lastTimestamp = currentTimestamp;
 
     return {
       marketId: this.state.marketId,
@@ -68,10 +75,10 @@ export class YieldAnalyticsEngine {
           liquidityStress: this.state.liquidityStress,
         },
 
-        confidence: this.state.confidence,
+        //confidence: this.state.confidence,
       },
 
-      decision,
+      //decision,
     };
   }
 }
