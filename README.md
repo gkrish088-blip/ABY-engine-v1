@@ -42,6 +42,7 @@ A **normalized market snapshot** is required for each update:
   liquidity: number,
   timestamp: number
 }
+```
 
 
 Important: Snapshots must arrive in chronological order and belong to the same market.
