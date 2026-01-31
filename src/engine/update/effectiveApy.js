@@ -9,6 +9,7 @@
  * - no side effects
  */
 import { RISK_WEIGHTS } from "../../config/constants.js";
+import { safeSqrt } from "../../math/utils.js";
 /**
  * Computes effective (risk-adjusted) APY.
  *

@@ -33,8 +33,9 @@ export function updateApy(state, snapshot) {
     state.smoothedAPY = newSmoothedAPY
 
     //update apy trend 
+    const instantaneousDrift = newSmoothedAPY - previousSmoothedAPY;
 
-    state.apy.trend = emaUpdate(state.apyTrend,instantaneousDrift , deltaTime , TIME_CONSTANTS.APY_TREND);
+    state.apyTrend = emaUpdate(state.apyTrend,instantaneousDrift , deltaTime , TIME_CONSTANTS.APY_TREND);
 
     //update last observed values 
     state.lastRawAPY = rawAPY;
