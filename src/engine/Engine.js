@@ -51,6 +51,8 @@ export class YieldAnalyticsEngine {
       instabilityVariance: this.state.instabilityVariance,
       liquidityStress: this.state.liquidityStress,
     });
+    state.lastTimestamp = currentTimestamp;
+
     return {
       marketId: this.state.marketId,
       timestamp: snapshot.timestamp,

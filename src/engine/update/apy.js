@@ -39,5 +39,4 @@ export function updateApy(state, snapshot) {
 
     //update last observed values 
     state.lastRawAPY = rawAPY;
-    state.lastTimestamp = currentTimestamp;
 }
