@@ -1,36 +1,34 @@
-
-
 # ABY Yield Analytics Engine
 
-A deterministic, protocol-agnostic DeFi Yield Analytics Engine written in JavaScript.
+> Deterministic • Explainable • Protocol-Agnostic DeFi Yield Analytics
 
-This engine processes streaming yield market snapshots and produces interpretable analytics such as **Smoothed APY**, **Effective APY**, and multi-dimension **Risk Metrics** — without machine learning or black-box models.
-
----
-
-## Overview
-
-ABY Engine is designed to be:
-
-- **Deterministic** – Same input always produces the same output
-- **Explainable** – Every metric is mathematically traceable
-- **Protocol-Agnostic** – Works across any DeFi platform
-- **Stateful** – Incremental updates over time
-- **Lightweight** – No ML libraries or heavy dependencies
-
-### Intended Use Cases
-
-- DeFi dashboards
-- Yield aggregators
-- Analytics platforms
-- Risk monitoring tools
-- Research & simulation environments
+A lightweight JavaScript engine that analyzes streaming DeFi market snapshots and produces interpretable yield analytics — **without machine learning, randomness, or black-box models.**
 
 ---
 
-## Input Format
+## Features
 
-A **normalized market snapshot** is required for each update:
+- Deterministic – Same input → Same output
+- Explainable Math – Every metric is traceable
+- Protocol Agnostic – Works across DeFi platforms
+- Stateful Streaming Engine – Designed for live data
+- Lightweight – No heavy dependencies
+- Multi-Dimensional Risk Metrics
+
+---
+
+## Use Cases
+
+- DeFi Dashboards  
+- Yield Aggregators  
+- Analytics Platforms  
+- Risk Monitoring Tools  
+- Backtesting & Simulation  
+- Research Projects  
+
+---
+
+## Input Snapshot Format
 
 ```js
 {
@@ -44,13 +42,16 @@ A **normalized market snapshot** is required for each update:
 }
 ```
 
+**Rules**
+- Snapshots must be chronological
+- One engine instance per market
+- No missing timestamps unless testing gaps
 
-Important: Snapshots must arrive in chronological order and belong to the same market.
+---
 
-Output Format
+## Output Metrics
 
-Each update returns analytics metrics:
-
+```js
 {
   marketId,
   timestamp,
@@ -65,132 +66,152 @@ Each update returns analytics metrics:
     }
   }
 }
+```
 
-Risk Dimensions
+---
 
-The engine separates risk into independent channels instead of using a single opaque score.
+## Risk Dimensions
 
-Metric	Meaning
-Noise Variance	Short-term APY fluctuations
-Instability Variance	Structural unpredictability / regime change
-Liquidity Stress	Capital fragility / rug risk
-Architecture
+| Metric | Description |
+|-------|------------|
+| Noise Variance | Short-term APY fluctuations |
+| Instability Variance | Structural unpredictability |
+| Liquidity Stress | Capital fragility / rug risk |
+
+---
+
+## Architecture
+
+```
 EngineState
    ↓
 YieldAnalyticsEngine.update(snapshot)
    ↓
-Modules:
-  ├─ updateApy
-  ├─ updateVolatility
-  ├─ updateLiquidity
-  └─ computeEffectiveApy
+Modules
+ ├─ updateApy
+ ├─ updateVolatility
+ ├─ updateLiquidity
+ └─ computeEffectiveApy
+```
 
-Design Principles
+**Design Principles**
 
-EngineState → Data only, no logic
-
-Update modules → Pure math
-
-Engine orchestrator → Time management & commit phase
-
-Modules do not interfere with each other’s domains
-
-Installation
-git clone <your-repo-url>
-cd ABY-engine-v1
-npm install
-
-Usage
-Initialize Engine
-import { YieldAnalyticsEngine } from "./src/engine/Engine.js";
-
-const engine = new YieldAnalyticsEngine(initialSnapshot);
-
-Process Snapshots
-const result = engine.update(newSnapshot);
-console.log(result.metrics);
-
-Manual Simulation
-
-A simulation script is included to validate long-term behavior.
-
-Run:
-
-node examples/manualSimulation.js
-
-Scenarios Included
-
-Incentive Spike – APY ramps and spikes
-
-Liquidity Rug – Liquidity collapse
-
-High Noise – Oscillating APY
-
-Data Gap – Long timestamp discontinuity
-
-Each scenario runs 200 ticks to test stability and correctness.
-
-Mathematical Model
-
-The engine uses:
-
-EMA Smoothing for APY and trend
-
-Variance EMA for volatility
-
-Time-weighted decay for stability
-
-No Machine Learning
-
-No Randomness
-
-This ensures full determinism and reproducibility.
-
-Gap Handling
-
-Large timestamp gaps introduce mild instability to represent stale data risk without exaggerating volatility.
-
-Typical thresholds:
-
-Type	Example
-Soft Gap	~30 minutes
-Hard Gap	~2 hours
-Determinism Guarantee
-
-No randomness
-
-No hidden state mutation
-
-Pure mathematical updates
-
-Fully reproducible outputs
-
-Ideal for auditing, analytics, and financial tooling.
-
-Future Extensions (Optional)
-
-Confidence scoring
-
-Decision labeling
-
-Portfolio aggregation
-
-Alert thresholds
-
-Historical backtesting
-
-License
-
-MIT (or choose your preferred license)
-
-Author
-
-Krish – Deterministic DeFi Analytics Engineering
-
-One-Line Summary
-
-Deterministic DeFi Yield Analytics Engine producing interpretable APY and risk metrics using pure mathematics — no ML, no black boxes, fully explainable and protocol-agnostic.
-
+- EngineState → Data Only  
+- Modules → Pure Mathematics  
+- Engine → Orchestration & Time Control  
+- No Cross-Domain Mutation  
 
 ---
 
+## Installation
+
+```bash
+git clone <repo-url>
+cd ABY-engine-v1
+npm install
+```
+
+---
+
+## Usage
+
+### Initialize Engine
+
+```js
+import { YieldAnalyticsEngine } from "./src/engine/Engine.js";
+
+const engine = new YieldAnalyticsEngine(initialSnapshot);
+```
+
+### Process Snapshot
+
+```js
+const result = engine.update(newSnapshot);
+console.log(result.metrics);
+```
+
+---
+
+## Manual Simulation
+
+Run long-horizon validation scenarios:
+
+```bash
+node examples/manualSimulation.js
+```
+
+### Scenarios Included
+
+| Scenario | Purpose |
+|---------|--------|
+| Incentive Spike | Yield ramp & plateau |
+| Liquidity Rug | Liquidity collapse |
+| High Noise | Oscillating APY |
+| Data Gap | Timestamp discontinuity |
+
+Each scenario runs **200 ticks** to validate stability.
+
+---
+
+## Mathematical Model
+
+The engine uses:
+
+- EMA Smoothing – Yield level & trend  
+- Variance EMA – Volatility estimation  
+- Time-Weighted Decay – Gap awareness  
+- No Machine Learning  
+- No Randomness  
+
+This guarantees reproducibility and auditability.
+
+---
+
+## Gap Handling
+
+Large timestamp gaps introduce **mild structural instability** instead of false volatility.
+
+| Gap Type | Example |
+|---------|--------|
+| Soft Gap | ~30 minutes |
+| Hard Gap | ~2 hours |
+
+---
+
+## Determinism Guarantee
+
+- No randomness  
+- No hidden state mutation  
+- Pure functional updates  
+- Fully reproducible results  
+
+Ideal for finance, auditing, and analytics tooling.
+
+---
+
+## Future Extensions
+
+- Confidence Scoring  
+- Decision Labels  
+- Portfolio Aggregation  
+- Alert Thresholds  
+- Historical Backtesting  
+
+---
+
+## License
+
+MIT
+
+---
+
+## Author
+
+**Krish**  
+Deterministic DeFi Analytics Engineering
+
+---
+
+## One-Line Summary
+
+Deterministic DeFi Yield Analytics Engine producing interpretable APY and risk metrics using pure mathematics — **no ML, no black boxes, fully explainable.**
