@@ -19,6 +19,7 @@ export class EngineState {
     this.protocol = initialSnapshot.protocol;
     this.chain = initialSnapshot.chain;
     this.asset = initialSnapshot.asset;
+    
 
     //Time tracking
     this.lastTimestamp = initialSnapshot.timestamp;

@@ -68,6 +68,7 @@ export class YieldAnalyticsEngine {
         smoothedAPY: this.state.smoothedAPY,
         effectiveAPY: effectiveApy,
         trend: this.state.apyTrend,
+        asset:this.state.asset,
 
         risk: {
           noiseVariance: this.state.noiseVariance,
