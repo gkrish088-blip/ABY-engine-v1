@@ -59,6 +59,7 @@ A lightweight JavaScript engine that analyzes streaming DeFi market snapshots an
     smoothedAPY,
     effectiveAPY,
     trend,
+    asset,
     risk: {
       noiseVariance,
       instabilityVariance,
