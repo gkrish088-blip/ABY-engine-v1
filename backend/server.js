@@ -11,6 +11,7 @@ import dotenv from "dotenv";
 dotenv.config({ override: true });
 
 import express from "express";
+import cors from "cors";
 import { checkRpc, onBlock } from "./provider.js";
 import { getSnapshots, getChains } from "./indexer/aave.js";
 import { processSnapshot } from "./store.js";
@@ -29,6 +30,11 @@ function sleep(ms) {
 
 // --- Express app (API only; no blockchain here) ---
 const app = express();
+app.use(cors({
+  origin: "*",
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["*"],
+}));
 app.use(express.json());
 
 app.get("/api/v1/markets", getMarkets);
