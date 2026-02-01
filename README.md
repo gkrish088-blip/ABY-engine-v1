@@ -451,3 +451,11 @@ This software is provided for **educational and analytical purposes only**.
 **Krish**
 
 Deterministic DeFi Analytics Engineering
+
+**Fathima**
+
+Deterministic Backend and API Engineering
+
+**Raman Kumar**
+
+Creative Frontend Engineering
