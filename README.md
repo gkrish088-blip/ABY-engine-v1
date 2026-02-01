@@ -1,4 +1,4 @@
-# ABY Yield Analytics Engine
+# APY Yield Analytics Engine
 
 **Real-Time Web3 Yield Analytics Backend**
 
