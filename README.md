@@ -2,6 +2,47 @@
 
 **Real-Time Web3 Yield Analytics Backend**
 
+## 🔗 Public API (Live)
+
+**Base URL (Production):**  
+[https://aby-engine-api.onrender.com](https://aby-engine-v1.onrender.com/api/v1/markets)
+
+**Primary Endpoint:**  
+`GET /api/v1/markets`
+
+> This public endpoint serves the **latest deterministic yield analytics**
+> across all indexed markets and assets.
+
+### Quick Test
+
+```bash
+curl [https://aby-engine-api.onrender.com/api/v1/markets](https://aby-engine-v1.onrender.com/api/v1/markets)
+```
+
+
+### API Availability Notice
+
+The public API is backed by live on-chain indexing using third-party RPC providers
+(e.g., Alchemy).
+
+In rare cases, the service may be **temporarily unavailable** due to:
+- RPC rate-limit exhaustion
+- Provider maintenance or outages
+- Manual shutdown to prevent exceeding RPC quotas
+
+If the API does not respond:
+- The service may have been **paused by the maintainers**
+- No data corruption occurs; analytics state resumes once indexing restarts
+
+For guaranteed uptime or higher rate limits, users are encouraged to run
+the engine locally with their own RPC credentials.
+
+**Note:** 
+
+The public deployment prioritizes stability and cost-controlled RPC usage. As a result, indexing may be paused during periods of heavy RPC demand.
+
+
+
 ABY Engine is a production-grade backend system that provides real-time, deterministic yield analytics for DeFi lending markets. It continuously indexes on-chain data from multiple EVM chains, processes it through a mathematically explainable analytics engine, and exposes the results via a low-latency public API.
 
 **What problem does it solve?**
