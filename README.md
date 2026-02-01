@@ -47,8 +47,89 @@ The system is structured as four distinct layers:
 - Stateless request handling for horizontal scalability
 - JSON responses optimized for frontend consumption
 
----
+```mermaid
+flowchart TD
+    %% =========================
+    %% ON-CHAIN INGESTION LAYER
+    %% =========================
+    subgraph L1["On-Chain Ingestion Layer"]
+        RPC["Chain RPC\n(WebSocket / JSON-RPC)"]
+        B1["New Block Detected"]
+        POOL["Aave v3 Pool Contract"]
+        RAW["Raw Reserve Data\n(liquidityRate, aTokenSupply)"]
 
+        RPC --> B1
+        B1 --> POOL
+        POOL --> RAW
+    end
+
+    %% =========================
+    %% SNAPSHOT NORMALIZATION
+    %% =========================
+    subgraph L2["Snapshot Normalization Layer"]
+        N1["Normalize APY\n(ray → %)"]
+        N2["Normalize Liquidity\n(token decimals → units)"]
+        N3["Attach Metadata\n(marketId, asset, timestamp)"]
+        SNAP["Protocol-Agnostic Snapshot"]
+
+        RAW --> N1
+        N1 --> N2
+        N2 --> N3
+        N3 --> SNAP
+    end
+
+    %% =========================
+    %% DETERMINISTIC ENGINE
+    %% =========================
+    subgraph L3["Deterministic Analytics Engine"]
+        STATE["EngineState\n(per market + asset)"]
+
+        EMA["Time-Aware EMA Smoothing\nα = 1 − exp(−dt / τ)"]
+        TREND["Trend Computation"]
+        RISK["Risk Metrics\nnoise · instability · liquidity stress"]
+        EFFECTIVE["Effective APY\n(risk-adjusted)"]
+
+        SNAP --> STATE
+        STATE --> EMA
+        EMA --> TREND
+        TREND --> RISK
+        RISK --> EFFECTIVE
+    end
+
+    %% =========================
+    %% IN-MEMORY STATE STORE
+    %% =========================
+    subgraph L4["In-Memory Analytics Store"]
+        STORE["Latest Metrics\n(per market + asset)"]
+        EFFECTIVE --> STORE
+    end
+
+    %% =========================
+    %% PUBLIC API LAYER
+    %% =========================
+    subgraph L5["Public API Layer"]
+        API["Express.js Server"]
+        ENDPOINT["GET /api/v1/markets"]
+        HEALTH["GET /health"]
+        JSON["Frontend-Ready JSON"]
+
+        STORE --> API
+        API --> ENDPOINT
+        API --> HEALTH
+        ENDPOINT --> JSON
+    end
+
+    %% =========================
+    %% CONSUMERS
+    %% =========================
+    subgraph L6["Consumers"]
+        UI["Frontend Dashboards"]
+        BOTS["Bots / Analytics Services"]
+
+        JSON --> UI
+        JSON --> BOTS
+    end
+```
 ## Key Features
 
 | Feature | Description |
