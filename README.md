@@ -171,6 +171,62 @@ flowchart TD
         JSON --> BOTS
     end
 ```
+
+
+**Engine FLowchart**
+
+
+```mermaid
+flowchart TD
+    %% =========================
+    %% ENGINE ENTRY
+    %% =========================
+    SNAP["Normalized Snapshot<br/>(marketId, asset, rawAPY, liquidity, timestamp)"]
+
+    VALIDATE["Validate Snapshot<br/>(marketId match)"]
+
+    TIME["Compute Δt<br/>(timestamp - lastTimestamp)"]
+    STORE_DT["Store deltaTime<br/>on EngineState"]
+
+    %% =========================
+    %% ESTIMATION PHASE
+    %% =========================
+    subgraph EST["Estimation Phase (Read Old State)"]
+        APY["updateApy()<br/>EMA smoothing"]
+        VOL["updateVolatility()<br/>noise & instability"]
+        LIQ["updateLiquidity()<br/>liquidity stress"]
+    end
+
+    %% =========================
+    %% STATE COMMIT
+    %% =========================
+    COMMIT["Commit State<br/>lastRawAPY<br/>lastTimestamp"]
+
+    %% =========================
+    %% INTERPRETATION
+    %% =========================
+    EFFECTIVE["computeEffectiveApy()<br/>Risk-adjusted APY"]
+
+    %% =========================
+    %% OUTPUT
+    %% =========================
+    OUTPUT["Engine Output<br/>smoothedAPY<br/>effectiveAPY<br/>trend<br/>risk metrics"]
+
+    %% =========================
+    %% FLOW
+    %% =========================
+    SNAP --> VALIDATE
+    VALIDATE --> TIME
+    TIME --> STORE_DT
+
+    STORE_DT --> APY
+    APY --> VOL
+    VOL --> LIQ
+
+    LIQ --> COMMIT
+    COMMIT --> EFFECTIVE
+    EFFECTIVE --> OUTPUT
+```
 ## Key Features
 
 | Feature | Description |
